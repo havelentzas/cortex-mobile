@@ -67,6 +67,21 @@ router.get('/github/callback', async (req, res) => {
   });
   const githubUser = (await userRes.json()) as { id: number; login: string };
 
+  // Allowlist check — fail-secure: deny all if ALLOWED_GITHUB_LOGINS is not configured
+  const allowedLogins = (process.env.ALLOWED_GITHUB_LOGINS ?? '')
+    .split(',')
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  if (allowedLogins.length === 0) {
+    res.status(403).send('Server not configured: ALLOWED_GITHUB_LOGINS is not set.');
+    return;
+  }
+  if (!allowedLogins.includes(githubUser.login)) {
+    res.status(403).send('Access denied: your GitHub account is not on the allowlist for this server.');
+    return;
+  }
+
   // Upsert user — update login in case it changed
   db.prepare(`
     INSERT INTO users (github_id, github_login)
