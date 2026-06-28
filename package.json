@@ -1,0 +1,13 @@
+{
+  "name": "cortex-mobile",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter server dev\" \"pnpm --filter capture dev\"",
+    "build": "pnpm --filter server build && pnpm --filter capture build",
+    "start": "pnpm --filter server start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
