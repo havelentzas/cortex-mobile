@@ -107,4 +107,14 @@ router.get('/github/callback', async (req, res) => {
   res.redirect(process.env.CLIENT_URL!);
 });
 
+// Clear the session cookie and return to the PWA.
+router.get('/logout', (_req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+  });
+  res.redirect(process.env.CLIENT_URL!);
+});
+
 export default router;
